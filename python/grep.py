@@ -117,9 +117,9 @@
 #   * supress highlights when printing in grep buffer
 #
 #   2010-10-06
-#   version 0.6.7: by xt <xt@bash.no> 
+#   version 0.6.7: by xt <xt@bash.no>
 #   * better temporary file:
-#    use tempfile.mkstemp. to create a temp file in log dir, 
+#    use tempfile.mkstemp. to create a temp file in log dir,
 #    makes it safer with regards to write permission and multi user
 #
 #   2010-04-08
@@ -487,7 +487,7 @@ def dir_list(dir, filter_list=(), filter_excludes=True, include_dir=False):
         return cache_dir[key]
     except KeyError:
         pass
-    
+
     filter_list = filter_list or get_config_log_filter()
     dir_len = len(dir)
     if filter_list:
@@ -657,8 +657,8 @@ def make_regexp(pattern, matchcase=False):
             regexp = re.compile(pattern, re.IGNORECASE)
         else:
             regexp = re.compile(pattern)
-    except Exception, e:
-        raise Exception, 'Bad pattern, %s' %e
+    except Exception as e:
+        raise Exception ('Bad pattern, %s') %e
     return regexp
 
 def check_string(s, regexp, hilight='', exact=False):
@@ -716,7 +716,7 @@ def grep_file(file, head, tail, after_context, before_context, count, regexp, hi
                 return s
     else:
         check = lambda s: check_string(s, regexp, hilight, exact)
-    
+
     try:
         file_object = open(file, 'r')
     except IOError:
@@ -1002,7 +1002,7 @@ def grep_process(*args):
         global grep_options, log_pairs
         for log_name, log in log_pairs:
             result[log_name] = grep_file(log, *grep_options)
-    except Exception, e:
+    except Exception as e:
         result = e
 
     return pickle.dumps(result)
@@ -1038,7 +1038,7 @@ def grep_process_cb(data, command, return_code, out, err):
             if isinstance(data, Exception):
                 raise data
             matched_lines.update(data)
-        except Exception, e:
+        except Exception as e:
             set_buffer_error(repr(e))
             return WEECHAT_RC_OK
         else:
@@ -1180,7 +1180,7 @@ def buffer_update():
 
     # free matched_lines so it can be removed from memory
     del matched_lines
-    
+
 def split_line(s):
     """Splits log's line 's' in 3 parts, date, nick and msg."""
     global weechat_format
@@ -1280,12 +1280,12 @@ def buffer_input(data, buffer, input_data):
                 weechat.infolist_free(infolist)
             try:
                 cmd_grep_parsing(input_data)
-            except Exception, e:
+            except Exception as e:
                 error('Argument error, %s' %e, buffer=buffer)
                 return WEECHAT_RC_OK
             try:
                 show_matching_lines()
-            except Exception, e:
+            except Exception as e:
                 error(e)
     except NameError:
         error("There isn't any previous search to repeat.", buffer=buffer)
@@ -1342,11 +1342,11 @@ def cmd_grep_parsing(args):
 
     args = ' '.join(args) # join pattern for keep spaces
     if args:
-        pattern_tmpl = args  
+        pattern_tmpl = args
         pattern = _tmplRe.sub(tmplReplacer, args)
         debug('Using regexp: %s', pattern)
     if not pattern:
-        raise Exception, 'No pattern for grep the logs.'
+        raise Exception ('No pattern for grep the logs.')
 
     def positive_number(opt, val):
         try:
@@ -1359,7 +1359,7 @@ def cmd_grep_parsing(args):
                 opt = '-' + opt
             else:
                 opt = '--' + opt
-            raise Exception, "argument for %s must be a positive integer." %opt
+            raise Exception ("argument for %s must be a positive integer.") %opt
 
     for opt, val in opts:
         opt = opt.strip('-')
@@ -1454,7 +1454,7 @@ def cmd_grep(data, buffer, args):
     # parse
     try:
         cmd_grep_parsing(args)
-    except Exception, e:
+    except Exception as e:
         error('Argument error, %s' %e)
         return WEECHAT_RC_OK
 
@@ -1501,7 +1501,7 @@ def cmd_grep(data, buffer, args):
     # grepping
     try:
         show_matching_lines()
-    except Exception, e:
+    except Exception as e:
         error(e)
     return WEECHAT_RC_OK
 
@@ -1520,7 +1520,7 @@ def cmd_logs(data, buffer, args):
             opt = opt.strip('-')
             if opt in ('size', 's'):
                 sort_by_size = True
-    except Exception, e:
+    except Exception as e:
         error('Argument error, %s' %e)
         return WEECHAT_RC_OK
 
@@ -1703,7 +1703,7 @@ Examples:
             'completion_grep_args', '')
 
     # settings
-    for opt, val in settings.iteritems():
+    for opt, val in settings.items():
         if not weechat.config_is_set_plugin(opt):
             weechat.config_set_plugin(opt, val)
 
@@ -1716,7 +1716,7 @@ Examples:
     color_summary     = weechat.color('lightcyan')
     color_delimiter   = weechat.color('chat_delimiters')
     color_script_nick = weechat.color('chat_nick')
-    
+
     # pretty [grep]
     script_nick = '%s[%s%s%s]%s' %(color_delimiter, color_script_nick, SCRIPT_NAME, color_delimiter,
             color_reset)
